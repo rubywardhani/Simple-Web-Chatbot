@@ -1,4 +1,8 @@
-// Get user's timezone and locale
+import { getBotReply } from './botReply.js';
+
+// Time
+document.getElementById('welcome-time').textContent = getCurrentTime();
+
 function getCurrentTime() {
     const now = new Date();
     return now.toLocaleTimeString([], {
@@ -8,9 +12,6 @@ function getCurrentTime() {
         timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone
     });
 }
-
-// Set welcome message time
-document.getElementById('welcome-time').textContent = getCurrentTime();
 
 // Auto-resize textarea
 const textarea = document.getElementById('user-input');
@@ -27,26 +28,16 @@ function sendMessage() {
     if (message === "") return;
 
     addMessage(message, 'user');
-
     showTypingIndicator();
 
-    // Get bot reply
     setTimeout(() => {
         hideTypingIndicator();
         const botReply = getBotReply(message);
         addMessage(botReply, 'bot');
     }, 800 + Math.random() * 1200);
 
-    // Clear input
     userInput.value = "";
     userInput.style.height = 'auto';
-}
-
-function getBotReply(msg) {
-    // Respond
-    if (msg.toLowerCase().includes("hello")) return "Hello there!";
-    if (msg.toLowerCase().includes("who are you")) return "I'm your chatbot!";
-    return "Sorry, I don't understand what you mean";
 }
 
 function addMessage(text, sender) {
@@ -60,12 +51,12 @@ function addMessage(text, sender) {
     });
 
     messageDiv.innerHTML = `
-            <div class="message-avatar">${sender === 'user' ? 'U' : 'AI'}</div>
-            <div>
-                <div class="message-content">${text}</div>
-                <div class="message-time">${currentTime}</div>
-            </div>
-        `;
+        <div class="message-avatar">${sender === 'user' ? 'U' : 'AI'}</div>
+        <div>
+            <div class="message-content">${text}</div>
+            <div class="message-time">${currentTime}</div>
+        </div>
+    `;
 
     chatBox.appendChild(messageDiv);
     chatBox.scrollTop = chatBox.scrollHeight;
@@ -76,28 +67,24 @@ function showTypingIndicator() {
     const typingDiv = document.createElement('div');
     typingDiv.className = 'message bot typing-message';
     typingDiv.innerHTML = `
-            <div class="message-avatar">AI</div>
-            <div class="typing-indicator">
-                <div class="typing-dots">
-                    <div class="typing-dot"></div>
-                    <div class="typing-dot"></div>
-                    <div class="typing-dot"></div>
-                </div>
+        <div class="message-avatar">AI</div>
+        <div class="typing-indicator">
+            <div class="typing-dots">
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
             </div>
-        `;
-
+        </div>
+    `;
     chatBox.appendChild(typingDiv);
     chatBox.scrollTop = chatBox.scrollHeight;
 }
 
 function hideTypingIndicator() {
     const typingMessage = document.querySelector('.typing-message');
-    if (typingMessage) {
-        typingMessage.remove();
-    }
+    if (typingMessage) typingMessage.remove();
 }
 
-// Enter key to send message
 document.getElementById("user-input").addEventListener("keypress", function (e) {
     if (e.key === "Enter" && !e.shiftKey) {
         e.preventDefault();

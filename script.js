@@ -1,3 +1,24 @@
+// Get user's timezone and locale
+function getCurrentTime() {
+    const now = new Date();
+    return now.toLocaleTimeString([], {
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false,
+        timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone
+    });
+}
+
+// Set welcome message time
+document.getElementById('welcome-time').textContent = getCurrentTime();
+
+// Auto-resize textarea
+const textarea = document.getElementById('user-input');
+textarea.addEventListener('input', function () {
+    this.style.height = 'auto';
+    this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+});
+
 function sendMessage() {
     const userInput = document.getElementById("user-input");
     const chatBox = document.getElementById("chat-box");
@@ -5,27 +26,81 @@ function sendMessage() {
     const message = userInput.value.trim();
     if (message === "") return;
 
-    // View chat
-    chatBox.innerHTML += `<p><strong>You:</strong> ${message}</p>`;
+    addMessage(message, 'user');
 
-    // Reply simulation
-    const botReply = getBotReply(message);
-    chatBox.innerHTML += `<p><strong>Bot:</strong> ${botReply}</p>`;
+    showTypingIndicator();
 
-    // Auto scroll
-    chatBox.scrollTop = chatBox.scrollHeight;
+    // Get bot reply
+    setTimeout(() => {
+        hideTypingIndicator();
+        const botReply = getBotReply(message);
+        addMessage(botReply, 'bot');
+    }, 800 + Math.random() * 1200);
+
+    // Clear input
     userInput.value = "";
+    userInput.style.height = 'auto';
 }
 
 function getBotReply(msg) {
     // Respond
     if (msg.toLowerCase().includes("hello")) return "Hello there!";
-    if (msg.toLowerCase().includes("Who are you")) return "I'm your chatbot!";
+    if (msg.toLowerCase().includes("who are you")) return "I'm your chatbot!";
     return "Sorry, I don't understand what you mean";
 }
 
+function addMessage(text, sender) {
+    const chatBox = document.getElementById('chat-box');
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `message ${sender}`;
+
+    const currentTime = new Date().toLocaleTimeString('id-ID', {
+        hour: '2-digit',
+        minute: '2-digit'
+    });
+
+    messageDiv.innerHTML = `
+            <div class="message-avatar">${sender === 'user' ? 'U' : 'AI'}</div>
+            <div>
+                <div class="message-content">${text}</div>
+                <div class="message-time">${currentTime}</div>
+            </div>
+        `;
+
+    chatBox.appendChild(messageDiv);
+    chatBox.scrollTop = chatBox.scrollHeight;
+}
+
+function showTypingIndicator() {
+    const chatBox = document.getElementById('chat-box');
+    const typingDiv = document.createElement('div');
+    typingDiv.className = 'message bot typing-message';
+    typingDiv.innerHTML = `
+            <div class="message-avatar">AI</div>
+            <div class="typing-indicator">
+                <div class="typing-dots">
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                </div>
+            </div>
+        `;
+
+    chatBox.appendChild(typingDiv);
+    chatBox.scrollTop = chatBox.scrollHeight;
+}
+
+function hideTypingIndicator() {
+    const typingMessage = document.querySelector('.typing-message');
+    if (typingMessage) {
+        typingMessage.remove();
+    }
+}
+
+// Enter key to send message
 document.getElementById("user-input").addEventListener("keypress", function (e) {
-    if (e.key === "Enter") {
+    if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
         sendMessage();
     }
 });

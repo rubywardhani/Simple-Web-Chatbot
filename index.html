@@ -9,13 +9,40 @@
 </head>
 
 <body>
-    <div class="chat-container">
-        <div id="chat-box"></div>
-        <input type="text" id="user-input" placeholder="Tulisan pesan...">
-        <button onclick="sendMessage()">Kirim</button>
-    </div>
 
-    <script src="script.js"></script>
-</body>
+    <body>
+        <div class="chat-container">
+            <div class="chat-header">
+                <div class="chat-title">
+                    <span class="status-dot"></span>
+                    AI Assistant
+                </div>
+            </div>
+
+            <div id="chat-box">
+                <div class="message bot">
+                    <div class="message-avatar">AI</div>
+                    <div>
+                        <div class="message-content">
+                            Halo! Saya siap membantu Anda. Ada yang bisa saya bantu hari ini?
+                        </div>
+                        <div class="message-time" id="welcome-time"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="input-container">
+                <textarea id="user-input" placeholder="Ketik pesan Anda di sini..." rows="1"></textarea>
+                <button class="send-button" onclick="sendMessage()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="22" y1="2" x2="11" y2="13"></line>
+                        <polygon points="22,2 15,22 11,13 2,9 22,2"></polygon>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <script src="script.js"></script>
+    </body>
 
 </html>
